@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
+    val PHONE_NO = "12345678"
     val TAG = "xyz"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startSMSActivity() {
         val sendIntent = Intent(Intent.ACTION_VIEW)
-        sendIntent.data = Uri.parse("sms:41775732")
+        sendIntent.data = Uri.parse("sms:$PHONE_NO")
         sendIntent.putExtra("sms_body", "Hi, it goes well on the android course...")
         startActivity(sendIntent)
     }
@@ -73,10 +74,7 @@ class MainActivity : AppCompatActivity() {
                 return
             } else Log.d(TAG, "permission to SEND_SMS granted!")
         }
-
-        val m: SmsManager = SmsManager.getDefault()
-        val text = "Hi, it goes well on the android course..."
-        m.sendTextMessage("41775732", null, text, null, null)
+        sendMessage()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -84,10 +82,14 @@ class MainActivity : AppCompatActivity() {
                                             grantResults: IntArray) {
         Log.d(TAG, "Permission: " + permissions[0] + " - grantResult: " + grantResults[0])
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            val m = SmsManager.getDefault()
-            val text = "Hi, it goes well on the android course..."
-            m.sendTextMessage("41775732", null, text, null, null)
+            sendMessage()
         }
+    }
+
+    private fun sendMessage() {
+        val m: SmsManager = SmsManager.getDefault()
+        val text = "Hi, it goes well on the android course..."
+        m.sendTextMessage(PHONE_NO, null, text, null, null)
     }
     private fun showYesNoDialog() {
         val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
