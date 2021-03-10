@@ -30,9 +30,10 @@ class MainActivity : AppCompatActivity() {
 
     fun onClickCALL(view: View) {
         val intent = Intent(Intent.ACTION_DIAL)
-        intent.data = Uri.parse("tel:41775732")
+        intent.data = Uri.parse("tel:$PHONE_NO")
         startActivity(intent)
     }
+
     fun onClickEMAIL(view: View) {
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.type = "plain/text"
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClickBROWSER(view: View) {
-        val url = "http://www.dr.dk"
+        val url = "http://www.easv.dk"
         val i = Intent(Intent.ACTION_VIEW)
         i.data = Uri.parse(url)
         startActivity(i)
@@ -58,22 +59,21 @@ class MainActivity : AppCompatActivity() {
         startActivity(sendIntent)
     }
 
+    val PERMISSION_REQUEST_CODE = 1
+
     private fun sendSMSDirectly() {
         Toast.makeText(this, "An sms will be send", Toast.LENGTH_LONG)
                 .show()
-
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.SEND_SMS)
                     == PackageManager.PERMISSION_DENIED) {
                 Log.d(TAG, "permission denied to SEND_SMS - requesting it")
                 val permissions = arrayOf(Manifest.permission.SEND_SMS)
-                val PERMISSION_REQUEST_CODE = 1
                 requestPermissions(permissions, PERMISSION_REQUEST_CODE)
                 return
             } else Log.d(TAG, "permission to SEND_SMS granted!")
-        }
+        } else Log.d(TAG, "Runtime permission not needed")
         sendMessage()
     }
 
@@ -87,19 +87,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendMessage() {
-        val m: SmsManager = SmsManager.getDefault()
+        val m = SmsManager.getDefault()
         val text = "Hi, it goes well on the android course..."
         m.sendTextMessage(PHONE_NO, null, text, null, null)
     }
     private fun showYesNoDialog() {
-        val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("SMS Handling")
         alertDialogBuilder
                 .setMessage("Click Direct if SMS should be send directly. Click Start to start SMS app...")
                 .setCancelable(true)
-                .setPositiveButton("Direct", { dialog, id -> })
+                .setPositiveButton("Direct") { dialog, id -> sendSMSDirectly() }
                 .setNegativeButton("Start", { dialog, id -> startSMSActivity() })
-        val alertDialog: AlertDialog = alertDialogBuilder.create()
+        val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
 }
